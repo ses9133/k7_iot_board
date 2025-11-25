@@ -43,6 +43,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         // 1. provider로 부터 사용자 정보 가져오기
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        /*
+        *  Spring Security OAuth2 Client 의 역할
+        * - Authorization Code → Access Token 교환
+        * - Access Token → UserInfo API 호출
+        * - 응답 JSON → OAuth2User로 변환
+        * - provider 마다 attribute key가 달라도 통일된 포맷으로 제공
+        *
+        * => 개발자는 Spring 이 가져온 사용자 정보를 DB의 User 엔티티에 upsert, UserPrincipal 로 변환하면 됨
+        * */
 
         // 2. registrationId로 provider 구분
         String registrationId = userRequest.getClientRegistration().getRegistrationId();

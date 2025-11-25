@@ -52,7 +52,7 @@ public class 개요 {
 * /oauth2/authorization/google
 * /oauth2/authorization/kakao
 * /oauth2/authorization/naver
-* - 이 URL 을 누르면 Spring Security OAuth2 기능이 작동하기 시작ㅎ
+* - 이 URL 을 누르면 Spring Security OAuth2 기능이 작동하기 시작
 * - 프론트가 따로 API 요청하는 것이 아님, 브라우저가 단순히 해당 URL 로 페이지 이동(redirect) 하는 것
 *
 * 2) Spring Security 가 자동으로 소셜 로그인 페이지로 리다이렉트
@@ -79,7 +79,7 @@ public class 개요 {
 * 5) DB 에 해당 유저가 존재하는 지 확인
 *
 * 6) 로그인 성공 후 서버가 JWT 토큰 발급
-* - OAuth2AuthenticationSuccessHander 에서 Access, RefreshToken 생성
+* - OAuth2AuthenticationSuccessHandler 에서 Access, RefreshToken 생성 (이 흐름을 WebSecurityConfig 에서 설정)
 * - 프론트에게 전달해야하므로 redirect 함
 *   http://localhost:5173/oauth2/callback?accessToken=AAAAA...&refreshToken=BBBBB...
 * - JWT는 우리 서비스가 사용하는 인증 방식이기 때문에 소셜 로그인이든 로컬 로그인이든 최종 결과는 JWT 로그인이 됨
@@ -110,33 +110,4 @@ public class 개요 {
 [프론트]
    ↓ JWT 저장 → 로그인 완료!
 
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
 * */

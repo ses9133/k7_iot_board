@@ -1,5 +1,8 @@
 package org.example.boardback.service.auth.impl;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.boardback.common.enums.ErrorCode;
@@ -15,8 +18,10 @@ import org.example.boardback.repository.auth.RefreshTokenRepository;
 import org.example.boardback.repository.user.UserRepository;
 import org.example.boardback.security.provider.JwtProvider;
 import org.example.boardback.security.user.UserPrincipalMapper;
+import org.example.boardback.security.util.CookieUtils;
 import org.example.boardback.service.auth.AuthService;
 import org.example.boardback.service.auth.EmailService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +37,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
+
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -40,12 +46,17 @@ public class AuthServiceImpl implements AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
+    @Value("${app.oauth2.authorized-redirect-uri}")
+    private String redirectUri;
+
+    private static final String REFRESH_TOKEN = "refreshToken";
+
     // ============================================
     // 로그인
     // ============================================
     @Override
     @Transactional
-    public ResponseDto<LoginResponseDto> login(LoginRequestDto request) {
+    public ResponseDto<LoginResponseDto> login(LoginRequestDto request, HttpServletResponse response) {
         try {
             // 스프링 시큐리티 AuthenticationManager로 인증 시도
             // : ID가 존재하는지
@@ -97,9 +108,17 @@ public class AuthServiceImpl implements AuthService {
                             }
                     );
 
+            CookieUtils.addHttpOnlyCookie(
+                    response,
+                    REFRESH_TOKEN,
+                    refreshToken,
+                    (int) (refreshRemaining / 1000),
+                    true
+            );
+
             return ResponseDto.success(
                     "로그인 성공",
-                    LoginResponseDto.of(accessToken, refreshToken, accessExpiresIn)
+                    LoginResponseDto.of(accessToken, accessExpiresIn)
             );
 
         } catch (BadCredentialsException ex) {
@@ -114,28 +133,29 @@ public class AuthServiceImpl implements AuthService {
     // ============================================
     @Override
     @Transactional
-    public ResponseDto<LoginResponseDto> refresh(RefreshRequestDto request) {
+    public ResponseDto<LoginResponseDto> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        // HttpOnly 쿠키에서 refreshToken 읽기
+        String refreshToken = CookieUtils.getCookie(request, REFRESH_TOKEN)
+                .map(Cookie::getValue)
+                .orElseThrow(() -> new BusinessException(ErrorCode.TOKEN_EXPIRED)); // ErrorCode.REFRESH_TOKEN_NOT_FOUND가 맞음
 
-        // 전달받은 refreshToken 문자열을 꺼냄
-        String provided = request.refreshToken();
-
-        // jwtProvider로 유효성 검사
-        if (!jwtProvider.isValidToken(provided)) {
+        if (!jwtProvider.isValidToken(refreshToken)) {
+            // 유효하지 않은 토큰
             throw new BusinessException(ErrorCode.TOKEN_INVALID);
         }
 
         // 토큰에서 username 꺼내기
-        String username = jwtProvider.getUsernameFromJwt(provided);
+        String username = jwtProvider.getUsernameFromJwt(refreshToken);
 
         // DB에서 해당 유저의 RefreshToken 레코드 조회
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         RefreshToken stored = refreshTokenRepository.findByUser(user)
-                .orElseThrow(() -> new BusinessException(ErrorCode.TOKEN_INVALID));
+                .orElseThrow(() -> new BusinessException(ErrorCode.TOKEN_INVALID)); // ErrorCode.REFRESH_TOKEN_NOT_FOUND가 맞음
 
         // DB에 저장된 토큰과 현재 요청 토큰이 같은지 확인
-        if (!stored.getToken().equals(provided)) {
+        if (!stored.getToken().equals(refreshToken)) {
             throw new BusinessException(ErrorCode.TOKEN_INVALID, "Refresh token mismatch");
         }
 
@@ -158,9 +178,17 @@ public class AuthServiceImpl implements AuthService {
         stored.renew(newRefresh, Instant.now().plusMillis(refreshRemaining));
         refreshTokenRepository.save(stored);
 
+        CookieUtils.addHttpOnlyCookie(
+                response,
+                REFRESH_TOKEN,
+                newRefresh,
+                (int) (refreshRemaining) / 1000,
+                false
+        );
+
         return ResponseDto.success(
                 "토큰 재발급 완료",
-                LoginResponseDto.of(newAccess, newRefresh, accessExpiresIn)
+                LoginResponseDto.of(newAccess, accessExpiresIn)
         );
     }
 
@@ -169,15 +197,18 @@ public class AuthServiceImpl implements AuthService {
     // ============================================
     @Override
     @Transactional
-    public ResponseDto<Void> logout(LogoutRequestDto request) {
-        String provided = request.refreshToken();
+    public ResponseDto<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        // 1) 쿠키에서 refreshToken 가져오기
+        CookieUtils.getCookie(request, REFRESH_TOKEN).ifPresent(cookie -> {
+            String refreshToken = cookie.getValue();
 
-        if (!jwtProvider.isValidToken(provided)) {
-            log.warn("[logout] invalid refresh token");
-        }
+            if (jwtProvider.isValidToken(refreshToken)) {
+                String username = jwtProvider.getUsernameFromJwt(refreshToken);
+                userRepository.findByUsername(username).ifPresent(user -> refreshTokenRepository.deleteByUser(user));
+            }
+        });
 
-        refreshTokenRepository.findByToken(provided)
-                .ifPresent(refreshTokenRepository::delete);
+        CookieUtils.deleteCookie(response, REFRESH_TOKEN);
 
         return ResponseDto.success("로그아웃 완료");
     }

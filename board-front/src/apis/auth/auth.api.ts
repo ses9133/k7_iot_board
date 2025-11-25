@@ -22,10 +22,9 @@ export const authApi = {
   },
 
   /** refresh 토큰 재발급 */
-  refresh: async (refreshToken: string) => {
+  refresh: async () => {
     const res = await publicApi.post<ResponseDto<LoginResponse>>(
-      "/api/v1/auth/refresh",
-      { refreshToken }
+      "/api/v1/auth/refresh"
     );
     return res.data.data;
   },
