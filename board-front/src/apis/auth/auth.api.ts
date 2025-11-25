@@ -1,37 +1,60 @@
 // auth.api.ts
 
-import type { LoginRequest, LoginResponse } from "@/types/auth/auth.dto";
-import { publicApi } from "../common/axiosInstance";
+import type { LoginRequest, LoginResponse, SignupRequest } from "@/types/auth/auth.dto";
+import { privateApi, publicApi } from "../common/axiosInstance";
 import type { ResponseDto } from "@/types/common/ResponseDto";
 import { AUTH_PATH } from "./auth.path";
 
 export const authApi = {
   // async 함수의 반환타입: Promise
-  login: async (req: LoginRequest): Promise<LoginResponse> => {
+  loginApi: async (req: LoginRequest) => {
     // axios.메서드<메서드반환타입>();
     const res = await publicApi.post<ResponseDto<LoginResponse>>(
       AUTH_PATH.LOGIN,
       req
     );
 
-    if (res.data.data) {
-      return res.data.data;
-    } else {
-      throw new Error('로그인 응답 데이터가 존재하지 않습니다.');
-    }
+    return res.data;
   },
 
   /** refresh 토큰 재발급 */
-  refresh: async () => {
+  refreshApi: async () => {
     const res = await publicApi.post<ResponseDto<LoginResponse>>(
-      "/api/v1/auth/refresh"
+      AUTH_PATH.REFRESH
     );
-    return res.data.data;
+    return res.data;
   },
 
   /** 로그아웃 (서버 API 없어도 프론트에서 동작 가능) */
-  logout: async () => {
+  logoutApi: async () => {
+    const res = await privateApi.post<ResponseDto<void>>(AUTH_PATH.LOGOUT);
     // 서버에 요청할 게 없다면 빈 Promise 반환
-    return Promise.resolve(true);
+    return res.data;
   },
+
+  /** 회원가입 */
+  signupApi: async (body: SignupRequest) => {
+    const res = await publicApi.post<ResponseDto<void>>(
+      AUTH_PATH.SIGNUP,
+      body
+    );
+    return res.data;
+  },
+
+  /** 비밀번호 재설정 토큰 유효성 확인 */
+  verifyPasswordTokenApi: async (token: string) => {
+    const res = await publicApi.get(
+      `${AUTH_PATH.PASSWORD_VERIFY}?token=${encodeURIComponent(token)}`
+    );
+    return res.data;
+  },
+
+  /** 비밀번호 재설정 */
+  resetPasswordApi: async (body: PasswordResetRequestDto) => {
+    const res = await publicApi.post<ResponseDto<void>>(
+      AUTH_PATH.PASSWORD_RESET,
+      body
+    );
+    return res.data;
+  }
 };

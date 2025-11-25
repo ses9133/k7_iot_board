@@ -60,13 +60,4 @@ export const userApi = {
     );
     return res.data;
   },
-
-  /** 비밀번호 변경 */
-  changePassword: async (oldPassword: string, newPassword: string) => {
-    const res = await privateApi.put<ResponseDto<void>>(
-      `${USER_PREFIX}/password`,
-      { oldPassword, newPassword }
-    );
-    return res.data;
-  },
 };

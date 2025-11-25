@@ -18,7 +18,7 @@ public class UserPrincipalMapper {
     /** === JWT Filter에서 username만 가지고 principal 생성용 === */
     public UserPrincipal toPrincipal(@NonNull String username) {
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findWithRolesByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
 
         return map(user);

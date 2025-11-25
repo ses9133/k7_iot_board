@@ -49,7 +49,7 @@ public class 개요 {
 *
 * 1) 프론트에서 소셜 로그인 버튼 클릭
 * - 프론트가 다음 URL 로 이동함
-* /oauth2/authorization/google
+* /oauth2/authorization/google?redirect_uri=...
 * /oauth2/authorization/kakao
 * /oauth2/authorization/naver
 * - 이 URL 을 누르면 Spring Security OAuth2 기능이 작동하기 시작

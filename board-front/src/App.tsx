@@ -1,9 +1,15 @@
-import { useAuthInitQuery } from "@/hooks/auth/useAuthInitQuery";
+import { useAuthStore } from "./stores/auth.store";
+import LoginPage from "./pages/LoginPage";
+import { Link, Route, Routes } from "react-router-dom";
+import RegisterPage from "./pages/RegisterPage";
+import OAuth2CallbackPage from "./pages/OAuth2CallbackPage";
 
 export default function App() {
-  const { data: isLoggedIn, isLoading } = useAuthInitQuery();
+  const { isInitialized, accessToken, user } = useAuthStore();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (!isInitialized) return <div>Loading...</div>;
+
+  const isLoggedIn = Boolean(accessToken && user);
 
   return (
     <>
@@ -16,6 +22,14 @@ export default function App() {
         // <AuthRouter />  // 로그인 필요
         <>
           로그인 필요
+          <Link to="/login">로그인</Link>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+
+            {/* OAuth2 소셜 로그인 콜백 */}
+            <Route path="/oauth2/callback" element={<OAuth2CallbackPage />} />
+          </Routes>
         </>
       )}
     </>

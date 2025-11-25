@@ -96,11 +96,11 @@ VALUES
 # =====================
 CREATE TABLE roles (
 	role_name VARCHAR(30) PRIMARY KEY,
-    CONSTRAINT `chk_roles_role_name` CHECK(role_name IN ('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER'))
+    CONSTRAINT `chk_roles_role_name` CHECK(role_name IN ('USER', 'ADMIN', 'MANAGER'))
 )
 ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO roles VALUES ('ROLE_ADMIN'), ('ROLE_MANAGER'), ('ROLE_USER');
+INSERT INTO roles VALUES ('ADMIN'), ('MANAGER'), ('USER');
 
 CREATE TABLE user_roles (
 	id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -115,12 +115,12 @@ CREATE TABLE user_roles (
 ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO user_roles (user_id, role_name) VALUES
-(1, 'ROLE_ADMIN'),
-(2, 'ROLE_MANAGER'), (3, 'ROLE_MANAGER'), (4, 'ROLE_MANAGER'), (5, 'ROLE_MANAGER'),
-(6, 'ROLE_MANAGER'), (7, 'ROLE_MANAGER'),
-(8, 'ROLE_USER'), (9, 'ROLE_USER'), (10, 'ROLE_USER'),
-(11, 'ROLE_USER'), (12, 'ROLE_USER'), (13, 'ROLE_USER'),
-(14, 'ROLE_USER'), (15, 'ROLE_USER');
+(1, 'ADMIN'),
+(2, 'MANAGER'), (3, 'MANAGER'), (4, 'MANAGER'), (5, 'MANAGER'),
+(6, 'MANAGER'), (7, 'MANAGER'),
+(8, 'USER'), (9, 'USER'), (10, 'USER'),
+(11, 'USER'), (12, 'USER'), (13, 'USER'),
+(14, 'USER'), (15, 'USER');
 
 # =====================
 # 4️⃣ Refresh Tokens

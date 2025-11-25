@@ -2,6 +2,7 @@ package org.example.boardback.controller.board;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.boardback.common.apis.ApiBase;
 import org.example.boardback.common.apis.board.BoardApi;
 import org.example.boardback.dto.ResponseDto;
 import org.example.boardback.dto.board.request.*;
@@ -10,13 +11,12 @@ import org.example.boardback.service.board.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 /*
   게시글 정보 CRUD
   : 생성 + 조회 + 수정 시 게시글 이미지 동시에 처리
  */
 @RestController
-@RequestMapping
+@RequestMapping(BoardApi.ROOT)
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
@@ -25,7 +25,7 @@ public class BoardController {
     private final BoardPinService boardPinService;
     private final BoardReportService boardReportService;
     private final BoardStatService boardStatService;
-// ============================================================
+    // ============================================================
     // 1. 기본 CRUD
     // ============================================================
 

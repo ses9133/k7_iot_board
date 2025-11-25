@@ -39,6 +39,9 @@ dependencies {
     // H2 Database
     runtimeOnly 'com.h2database:h2'
 
+    // Instant 직렬화
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -46,7 +49,7 @@ dependencies {
     // Java 8 Date/Time Serialization (Java 8 날짜/시간 직렬화)
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.0'
 
-    // OAuth2
+
 
     // Spring Test
     testImplementation 'org.springframework.security:spring-security-test'
