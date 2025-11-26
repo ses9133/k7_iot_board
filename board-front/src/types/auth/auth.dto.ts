@@ -14,10 +14,22 @@ export interface LoginResponse {
   accessTokenExpiresInMillis: number;
 }
 
+type Gender = "M" | "F" | "N";
+
 // 회원가입 요청
 export interface SignupRequest {
   username: string;
   password: string;
+  confirmPassword: string;
   nickname: string;
-  email: string;
+  email: string; 
+  gender: Gender;
+  provider: string;
+}
+
+
+export interface PasswordResetRequestDto {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
 }

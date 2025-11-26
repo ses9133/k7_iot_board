@@ -60,8 +60,8 @@ CREATE TABLE users (
     updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
     
     CONSTRAINT `uk_users_username` UNIQUE(username),
-    CONSTRAINT `uk_users_email` UNIQUE(email),
-    CONSTRAINT `uk_users_nickname` UNIQUE(nickname),
+   -- CONSTRAINT `uk_users_email` UNIQUE(email),
+	-- CONSTRAINT `uk_users_nickname` UNIQUE(nickname),
     CONSTRAINT `uk_users_provider_provider_id` UNIQUE(provider, provider_id),
     
     CONSTRAINT `chk_users_gender` CHECK(gender IN ('MALE', 'FEMALE', 'OTHER', 'NONE')),
@@ -77,12 +77,16 @@ CREATE TABLE users (
 # === ROLES (권한) === #
 CREATE TABLE roles (
 	role_name VARCHAR(30) PRIMARY KEY,
-    CONSTRAINT `chk_roles_role_name` CHECK(role_name IN ('ROLE_USER', 'ROLE_ADMIN', 'ROLE_MANAGER'))
+    CONSTRAINT `chk_roles_role_name` CHECK(role_name IN ('USER', 'ADMIN', 'MANAGER'))
 )
 	ENGINE=InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci
     COMMENT = '사용자 권한 테이블';
+    
+INSERT INTO roles
+VALUES
+	("USER"), ("ADMIN"), ("MANAGER");
 
 # === USER_ROLES (유저-권한 매핑) === #
 CREATE TABLE user_roles (

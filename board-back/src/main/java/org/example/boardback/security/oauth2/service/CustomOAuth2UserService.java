@@ -89,13 +89,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
      * provider + providerId를 기준으로 User를 조회하여
      *
      * 1) 이미 존재하면: 이름/이메일 등 프로필 정보를 최신 상태로 업데이트
-     * 2) 존재하지 않으면: 신규 소셜 로그인 User를 생성한 뒤 ROLE_USER 부여
+     * 2) 존재하지 않으면: 신규 소셜 로그인 User를 생성한 뒤 USER 권한 부여
      *
      * 최종적으로 User 엔티티 반환
      * */
     @Transactional
     protected User upsertUser(AuthProvider provider, OAuth2UserInfo userInfo) {
-        // 소셜 서비으세서 제공하는 고유 사용자 ID (구글 sub, 카카오 id 등)
+        // 소셜 서비스에서 제공하는 고유 사용자 ID (구글 sub, 카카오 id, 네이버 id 등)
         String providerId = userInfo.getId();
 
         // 소셜에서 가져온 데이터 저장
@@ -119,12 +119,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         name
                     );
 
-                    // 기본 권한 ROLE_USER를 DB에서 조회
+                    // 기본 권한 USER 를 DB 에서 조회
                     Role userRole = roleRepository
                             .findById(RoleType.USER)
-                            .orElseThrow(() -> new IllegalArgumentException("ROLE_USER 가 DB에 없습니다."));
+                            .orElseThrow(() -> new IllegalArgumentException("USER 권한이 DB에 없습니다."));
 
-                    // 생성된 유저에게 ROLE_USER 권한 부여
+                    // 생성된 유저에게 USER 권한 부여
                     newUser.grantRole(userRole);
 
                     return userRepository.save(newUser);

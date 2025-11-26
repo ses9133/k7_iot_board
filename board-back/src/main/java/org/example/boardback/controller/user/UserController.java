@@ -3,21 +3,17 @@ package org.example.boardback.controller.user;
 import lombok.RequiredArgsConstructor;
 import org.example.boardback.common.apis.user.UserApi;
 import org.example.boardback.dto.ResponseDto;
-import org.example.boardback.entity.file.FileInfo;
-import org.example.boardback.service.impl.ProfileServiceImpl;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import org.example.boardback.dto.user.request.UserProfileUpdateRequest;
 import org.example.boardback.dto.user.response.MeResponseDto;
 import org.example.boardback.dto.user.response.UserResponseDto;
+import org.example.boardback.entity.file.FileInfo;
+import org.example.boardback.security.user.UserPrincipal;
+import org.example.boardback.service.impl.ProfileServiceImpl;
 import org.example.boardback.service.user.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(UserApi.ROOT)
@@ -35,9 +31,9 @@ public class UserController {
      */
     @GetMapping(UserApi.ME) // GET /api/v1/users/me
     public ResponseEntity<ResponseDto<MeResponseDto>> me(
-            @RequestAttribute("userId") Long userId // JWT 필터에서 주입된다고 가정
+            @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        ResponseDto<MeResponseDto> result = userService.getMe(userId);
+        ResponseDto<MeResponseDto> result = userService.getMe(userPrincipal.getId());
         return ResponseEntity.status(result.getStatus()).body(result);
     }
 
@@ -67,7 +63,7 @@ public class UserController {
     @PostMapping(UserApi.PROFILE_IMAGE)
     public ResponseEntity<ResponseDto<?>> uploadProfile(
             @AuthenticationPrincipal Long userId,
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file")MultipartFile file
     ) {
         ResponseDto<FileInfo> result = profileService.updateProfile(userId, file);
         return ResponseEntity.status(result.getStatus()).body(result);

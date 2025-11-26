@@ -12,7 +12,6 @@ import org.example.boardback.service.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.BufferedInputStream;
 import java.util.stream.Collectors;
 
 @Service

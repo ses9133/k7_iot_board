@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.example.boardback.common.enums.ErrorCode;
 import org.example.boardback.exception.BusinessException;
 import org.example.boardback.security.user.UserPrincipal;
+import org.springframework.stereotype.Component;
 
 /**
  * === PrincipalUtils ===

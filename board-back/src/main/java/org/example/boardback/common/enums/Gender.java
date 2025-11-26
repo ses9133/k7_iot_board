@@ -9,7 +9,7 @@ public enum Gender {
     MALE("M", "남성"),
     FEMALE("F", "여성"),
     OTHER("O", "기타"),
-    UNKNOWN("U", "미지정");
+    UNKNOWN("N", "미지정");
 
     private final String code;
     private final String description;

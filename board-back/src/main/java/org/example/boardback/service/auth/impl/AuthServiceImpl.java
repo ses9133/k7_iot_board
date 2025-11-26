@@ -37,7 +37,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -227,10 +226,17 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException(ErrorCode.DUPLICATE_USER);
         }
 
+        if (!request.password().equals(request.confirmPassword())) {
+            throw new BusinessException(ErrorCode.PASSWORD_CONFIRM_MISMATCH);
+        }
+
         // 이메일 중복 체크
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new BusinessException(ErrorCode.DUPLICATE_USER);
         }
+
+        System.out.println("provider name:" + request.provider().name());
+        System.out.println("gender:" + request.gender());
 
         // User 엔티티 생성 + 저장
         User newUser = User.builder()
@@ -239,6 +245,8 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(request.password()))
                 .email(request.email())
                 .nickname(request.nickname())
+                .gender(request.gender())
+                .provider(request.provider())
                 .build();
 
         userRepository.save(newUser);

@@ -1,6 +1,6 @@
 // auth.api.ts
 
-import type { LoginRequest, LoginResponse, SignupRequest } from "@/types/auth/auth.dto";
+import type { LoginRequest, LoginResponse, PasswordResetRequestDto, SignupRequest } from "@/types/auth/auth.dto";
 import { privateApi, publicApi } from "../common/axiosInstance";
 import type { ResponseDto } from "@/types/common/ResponseDto";
 import { AUTH_PATH } from "./auth.path";
