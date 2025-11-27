@@ -2,7 +2,7 @@ package org.example.boardback.dto.user.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.example.boardback.common.enums.RoleType;
+import org.example.boardback.common.enums.user.RoleType;
 
 import java.util.Set;
 

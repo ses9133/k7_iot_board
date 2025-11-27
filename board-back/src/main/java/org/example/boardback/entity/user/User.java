@@ -5,9 +5,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.boardback.common.enums.AuthProvider;
-import org.example.boardback.common.enums.Gender;
-import org.example.boardback.common.enums.RoleType;
+import org.example.boardback.common.enums.user.AuthProvider;
+import org.example.boardback.common.enums.user.Gender;
+import org.example.boardback.common.enums.user.RoleType;
 import org.example.boardback.entity.base.BaseTimeEntity;
 import org.example.boardback.entity.file.FileInfo;
 
@@ -57,7 +57,7 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> userRoles = new HashSet<>();
 
-    // OAuth2 필드
+    // == OAuth2 필드 ==
     // 1) 가입 경로 (LOCAL / GOOGLE / KAKAO / NAVER)
     @Enumerated(EnumType.STRING)
     @Column(name = "provider", length = 20, nullable = false)
@@ -70,6 +70,9 @@ public class User extends BaseTimeEntity {
     // 3) 이메일 인증 여부 (소셜은 대부분 true 처리)
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified;
+
+    // == 결제 필드 ==
+    private Long pointBalance;
 
     @Builder
     private User(
@@ -149,4 +152,15 @@ public class User extends BaseTimeEntity {
                 .map(Role::getName)
                 .collect(Collectors.toUnmodifiableSet());
     }
+
+    // == 결제 시스템 편의 메서드 == //
+    public void addPoint(Long amount) {
+        if(this.pointBalance == null) this.pointBalance = 0L;
+        this.pointBalance += amount;
+    }
+
+    public void subtractPoint(Long amount) {
+        if(this.pointBalance == null) this.pointBalance = 0L;
+        this.pointBalance -= amount;
+     }
 }

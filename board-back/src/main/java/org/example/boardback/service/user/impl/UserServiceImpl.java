@@ -1,6 +1,6 @@
 package org.example.boardback.service.user.impl;
 
-import org.example.boardback.common.enums.ErrorCode;
+import org.example.boardback.common.enums.user.ErrorCode;
 import org.example.boardback.dto.ResponseDto;
 import org.example.boardback.dto.user.request.UserProfileUpdateRequest;
 import org.example.boardback.dto.user.response.MeResponseDto;

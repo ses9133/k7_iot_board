@@ -2,8 +2,8 @@ package org.example.boardback.security.oauth2.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.boardback.common.enums.AuthProvider;
-import org.example.boardback.common.enums.RoleType;
+import org.example.boardback.common.enums.user.AuthProvider;
+import org.example.boardback.common.enums.user.RoleType;
 import org.example.boardback.entity.user.Role;
 import org.example.boardback.entity.user.User;
 import org.example.boardback.repository.user.RoleRepository;

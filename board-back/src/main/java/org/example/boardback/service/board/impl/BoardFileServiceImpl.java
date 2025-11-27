@@ -2,7 +2,7 @@ package org.example.boardback.service.board.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.example.boardback.common.enums.ErrorCode;
+import org.example.boardback.common.enums.user.ErrorCode;
 import org.example.boardback.dto.ResponseDto;
 import org.example.boardback.dto.board_file.BoardFileListDto;
 import org.example.boardback.dto.board_file.BoardFileUpdateRequestDto;
@@ -14,7 +14,7 @@ import org.example.boardback.repository.board.BoardRepository;
 import org.example.boardback.repository.file.BoardFileRepository;
 import org.example.boardback.repository.file.FileInfoRepository;
 import org.example.boardback.service.board.BoardFileService;
-import org.example.boardback.service.impl.FileServiceImpl;
+import org.example.boardback.service.file.FileServiceImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;

@@ -8,7 +8,7 @@ import org.example.boardback.dto.user.response.MeResponseDto;
 import org.example.boardback.dto.user.response.UserResponseDto;
 import org.example.boardback.entity.file.FileInfo;
 import org.example.boardback.security.user.UserPrincipal;
-import org.example.boardback.service.impl.ProfileServiceImpl;
+import org.example.boardback.service.file.ProfileServiceImpl;
 import org.example.boardback.service.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

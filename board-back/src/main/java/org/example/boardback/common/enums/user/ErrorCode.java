@@ -1,4 +1,4 @@
-package org.example.boardback.common.enums;
+package org.example.boardback.common.enums.user;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

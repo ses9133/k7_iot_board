@@ -3,8 +3,8 @@ package org.example.boardback.dto.auth.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.example.boardback.common.enums.AuthProvider;
-import org.example.boardback.common.enums.Gender;
+import org.example.boardback.common.enums.user.AuthProvider;
+import org.example.boardback.common.enums.user.Gender;
 import org.example.boardback.entity.file.FileInfo;
 import org.example.boardback.entity.user.User;
 

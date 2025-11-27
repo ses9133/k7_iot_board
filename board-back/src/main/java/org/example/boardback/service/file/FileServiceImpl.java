@@ -1,7 +1,7 @@
-package org.example.boardback.service.impl;
+package org.example.boardback.service.file;
 
 import lombok.RequiredArgsConstructor;
-import org.example.boardback.common.enums.ErrorCode;
+import org.example.boardback.common.enums.user.ErrorCode;
 import org.example.boardback.entity.file.FileInfo;
 import org.example.boardback.exception.FileStorageException;
 import org.example.boardback.repository.file.FileInfoRepository;

@@ -1,4 +1,4 @@
-package org.example.boardback.common.enums;
+package org.example.boardback.common.enums.user;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;

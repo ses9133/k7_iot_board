@@ -3,7 +3,7 @@ package org.example.boardback.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
-import org.example.boardback.common.enums.ErrorCode;
+import org.example.boardback.common.enums.user.ErrorCode;
 
 import java.time.Instant;
 

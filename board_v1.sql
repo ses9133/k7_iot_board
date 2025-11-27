@@ -56,6 +56,8 @@ CREATE TABLE users (
     provider_id VARCHAR(100),
     email_verified BOOLEAN NOT NULL,
     
+    point_balance BIGINT NOT NULL DEFAULT 0 COMMENT '사용자 포인트 잔액',
+    
     created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
     
@@ -73,6 +75,55 @@ CREATE TABLE users (
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci
     COMMENT = '사용자 기본 정보 테이블';
+    
+# == Payment == 
+CREATE TABLE payments (
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL COMMENT '결제한 사용자 ID',
+    order_id VARCHAR(100) NOT NULL COMMENT '주문 ID(내부 주문번호)',
+    payment_key VARCHAR(100) NOT NULL COMMENT '결제 키(PG 또는 모의 PG 트랜잭션 키)',
+    amount BIGINT NOT NULL COMMENT '결제 금액',
+    method VARCHAR(30) NOT NULL COMMENT '결제 수단',
+    status VARCHAR(30) NOT NULL COMMENT '결제 상태',
+    product_code VARCHAR(50) NOT NULL COMMENT '상품 코드',
+    product_name VARCHAR(100) NOT NULL COMMENT '상품 이름',
+    failure_code VARCHAR(50) NULL COMMENT '실패 코드',
+    failure_message VARCHAR(255) NULL COMMENT '실패 메시지',
+    
+    requested_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '결제 요청 시간',
+    approved_at DATETIME(6) NULL COMMENT '결제 승인 시간',
+    cancelled_at DATETIME(6) NULL COMMENT '결제 취소/환불 시간',
+    
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    
+    CONSTRAINT `uk_payments_payment_key` UNIQUE (payment_key),
+    INDEX `idx_payments_user_id` (user_id),
+    INDEX `idx_payments_order_id` (order_id),
+    CONSTRAINT `fk_payments_user` FOREIGN KEY (user_id) REFERENCES users(id) 
+);
+
+CREATE TABLE payment_refunds (
+	id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    payment_id BIGINT NOT NULL COMMENT '원 결제 ID',
+    
+    amount BIGINT NOT NULL COMMENT '환불 금액',
+    reason VARCHAR(255) NULL COMMENT '환불 사유',
+    status VARCHAR(30) NOT NULL COMMENT '환불 상태',
+    failure_code VARCHAR(50) NULL COMMENT '환불 실패 코드',
+    failure_message VARCHAR(255) NULL COMMENT '환불 실패 메시지',
+    
+    requested_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '환불 요청 시간',
+    completed_at DATETIME(6) NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '환불 완료 시간',
+    
+    created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+
+    INDEX `idx_payments_refunds_payment_id` (payment_id),
+    
+    CONSTRAINT `fk_payment_refunds_payment` FOREIGN KEY (payment_id) REFERENCES payments(id) 
+);
+
 
 # === ROLES (권한) === #
 CREATE TABLE roles (

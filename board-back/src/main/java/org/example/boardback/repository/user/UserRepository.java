@@ -2,9 +2,8 @@ package org.example.boardback.repository.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import org.example.boardback.common.enums.AuthProvider;
+import org.example.boardback.common.enums.user.AuthProvider;
 import org.example.boardback.entity.user.User;
-import org.example.boardback.security.user.UserPrincipalMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,7 +1,7 @@
 package org.example.boardback.exception;
 
 import lombok.Getter;
-import org.example.boardback.common.enums.ErrorCode;
+import org.example.boardback.common.enums.user.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 @Getter
