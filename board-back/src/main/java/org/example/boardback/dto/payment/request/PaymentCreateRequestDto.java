@@ -5,28 +5,27 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.example.boardback.common.enums.payment.PaymentMethod;
 
+/**
+ * === Mock + KakaoReady 요청용 DTO ===
+ *
+ * Mock 결제 → 이걸로 바로 결제 성공
+ *
+ * KakaoPay → ready 호출할 때 사용
+ *
+ * Toss → 사용하지 않음(FE 결제창에서 처리)
+ * */
 public record PaymentCreateRequestDto(
-        // PG 에 전달할 상품코드
         @NotBlank(message = "상품 코드는 필수입니다.")
         String productCode,
 
-        // 결제화면에 표시될 상품 이름
         @NotBlank(message = "상품 이름은 필수입니다.")
         String productName,
 
-        // 결제 금액
         @NotNull(message = "결제 금액은 필수입니다.")
         @Min(value = 100, message = "최소 결제 금액은 100원입니다.")
         Long amount,
 
         @NotNull(message = "결제 수단은 필수입니다.")
-        PaymentMethod Method,
+        PaymentMethod method
+) { }
 
-        // 결제 ID값- PG사에 제공
-        @NotBlank(message = "결제 키값은 필수입니다.")
-        String paymentKey,
-
-        @NotBlank(message = "주문 Id는 필수입니다.")
-        String orderId
-) {
-}

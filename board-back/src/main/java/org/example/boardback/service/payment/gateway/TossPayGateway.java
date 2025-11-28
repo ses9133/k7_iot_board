@@ -2,18 +2,24 @@ package org.example.boardback.service.payment.gateway;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.boardback.dto.payment.request.PaymentCreateRequestDto;
+import org.example.boardback.dto.payment.request.PaymentApproveRequestDto;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
-/**
- * == Toss 결제 게이트 웨이 ==
- * : Toss Payment의 결제 승인 API를 호출하는 역할
- * */
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Map;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class TossPayGateway implements PaymentGateway {
+
+    private final RestTemplate restTemplate;
 
     @Value("${payment.toss.secret-key}")
     private String secretKey;
@@ -22,17 +28,35 @@ public class TossPayGateway implements PaymentGateway {
     private String baseUrl;
 
     @Override
-    public PaymentResult pay(PaymentCreateRequestDto request) {
+    public PaymentResult approve(PaymentApproveRequestDto req, String userId) {
         try {
+            String url = baseUrl + "/v1/payments/confirm";
+
+            // Basic Auth
+            String auth = Base64.getEncoder()
+                    .encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Basic " + auth);
+
+            Map<String, Object> body = Map.of(
+                    "paymentKey", req.paymentKey(),
+                    "orderId", req.orderId(),
+                    "amount", req.amount()
+            );
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+            String response = restTemplate.postForObject(url, entity, String.class);
+            log.info("[TossPay] confirm response={}", response);
+
+            return PaymentResult.ok(req.paymentKey());
 
         } catch (Exception e) {
-            log.error("{TossPayGateway ERROR}, ", e);
-            return PaymentResult.builder()
-                    .success(false)
-                    .failureCode("TOSS_ERROR")
-                    .failureMessage(e.getMessage())
-                    .build();
+            log.error("[TossPay] ERROR", e);
+            return PaymentResult.fail("TOSS_ERROR", e.getMessage());
         }
-        return null;
     }
 }
+

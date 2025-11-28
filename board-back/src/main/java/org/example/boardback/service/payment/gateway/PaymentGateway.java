@@ -1,5 +1,6 @@
 package org.example.boardback.service.payment.gateway;
 
+import org.example.boardback.dto.payment.request.PaymentApproveRequestDto;
 import org.example.boardback.dto.payment.request.PaymentCreateRequestDto;
 
 /**
@@ -16,5 +17,14 @@ public interface PaymentGateway {
      * +) 우리 학습 단계에서는, 준비 + 승인 과정을 해당 메서드 내부에서 한 번에 처리
      *  (실제 프로덕션에서는 주로 1) 결제 준비, 2) 결제 승인 2단계로 나눔)
      * */
-    PaymentResult pay(PaymentCreateRequestDto request);
+//    PaymentResult pay(PaymentCreateRequestDto request);
+    /**
+     * 모든 PG 결제의 공통 프로세스
+     *  : 최종 승인 (approve/confirm)
+     *
+     *      Toss: confirm
+     *      Kakao: approve
+     *      Mock: 내부 승인
+     */
+    PaymentResult approve(PaymentApproveRequestDto request, String userId);
 }
